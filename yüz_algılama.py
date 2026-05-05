@@ -1,12 +1,12 @@
 """
-Yuz Algilama + Arduino Buzzer - Masaustu GUI Uygulamasi
+Yüz Algılama + Arduino Buzzer — Masaüstü GUI Uygulaması
 --------------------------------------------------------
-Ozellikler:
-  - Kamera Ac / Durdur butonu
-  - Alarm Sustur / Ac butonu
-  - Arduino Bagla / Ayir + port secimi
-  - Sistemi Kapat butonu
-  - Canli durum gostergeleri (kamera, arduino, buzzer, FPS, yuz sayisi)
+Özellikler:
+  • Kamera Aç / Durdur butonu
+  • Alarmı Sustur / Aç butonu
+  • Arduino'ya Bağla / Ayır + COM port seçimi
+  • Sistemi Kapat butonu
+  • Canlı durum göstergeleri (kamera, Arduino, buzzer, FPS, yüz sayısı)
 
 Python 3.10+ / Windows / OpenCV + pyserial + Pillow (+ tkinter built-in)
 """
@@ -28,18 +28,18 @@ except ImportError:
 
 
 # ============= ALGILAMA AYARLARI =============
-SCALE_FACTOR       = 1.25        # Yuksek = daha hizli
-MIN_NEIGHBORS      = 6
-MIN_YUZ_BOYUTU     = 60          # Algilama olcekli olduguna gore kucuk
-ONAY_KARE_SAYISI   = 3
-BAUD_RATE          = 9600
+SCALE_FACTOR       = 1.25        # Yüksek = daha hızlı, düşük = daha hassas
+MIN_NEIGHBORS      = 6           # Yüksek = az yanlış pozitif
+MIN_YUZ_BOYUTU     = 60          # Piksel — algılama ölçeklendiği için küçük
+ONAY_KARE_SAYISI   = 3           # Durum değişimi için gerekli ardışık kare
+BAUD_RATE          = 9600        # Arduino seri port hızı
 KAMERA_GENISLIK    = 640
 KAMERA_YUKSEKLIK   = 480
 
 # Performans
-ALGILAMA_OLCEK     = 0.5         # Algilama icin kareyi kucult (0.5 = yari)
-HER_KAC_KAREDE     = 2           # Her N karede bir algilama yap
-VIDEO_FPS_HEDEF    = 60          # GUI video guncelleme hedefi
+ALGILAMA_OLCEK     = 0.5         # Algılama için kareyi küçült (0.5 = yarı boyut)
+HER_KAC_KAREDE     = 2           # Her N karede bir algılama yap
+VIDEO_FPS_HEDEF    = 60          # GUI video güncelleme hedefi (FPS)
 # =============================================
 
 # Renk paleti
@@ -63,7 +63,7 @@ class YuzAlgilamaApp:
         self.root.configure(bg=BEYAZ)
         self.root.minsize(960, 560)
 
-        # Durum degiskenleri
+        # Durum değişkenleri
         self.kamera = None
         self.arduino = None
         self.kamera_aktif = False
@@ -76,9 +76,9 @@ class YuzAlgilamaApp:
         self._fps_sayac = 0
         self._thread = None
         self._stop_event = threading.Event()
-        self._mevcut_frame = None  # Thread'den gelen son frame
+        self._mevcut_frame = None  # Thread'den gelen son kare
 
-        # Yuz modeli
+        # Yüz algılama modeli
         self.yuz_modeli = cv2.CascadeClassifier(
             cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
         )
@@ -89,9 +89,9 @@ class YuzAlgilamaApp:
 
         self.root.protocol("WM_DELETE_WINDOW", self.sistemi_kapat)
 
-    # -------- ARAYUZ --------
+    # -------- ARAYÜZ --------
     def _arayuz_olustur(self):
-        # Ust bar
+        # Üst bar
         ust = tk.Frame(self.root, bg=BEYAZ, height=60)
         ust.pack(fill=tk.X, side=tk.TOP)
         ust.pack_propagate(False)
@@ -215,7 +215,7 @@ class YuzAlgilamaApp:
                                        self.arduino_toggle, renk=YESIL)
         self.btn_arduino.pack(fill=tk.X, padx=16, pady=(0, 14))
 
-        # Sistemi kapat dugmesi
+        # Sistemi Kapat düğmesi
         tk.Frame(parent, bg=BEYAZ).pack(expand=True, fill=tk.BOTH)
         self.btn_kapat = self._buton(parent, "Sistemi Kapat",
                                      self.sistemi_kapat, renk=KIRMIZI, onemli=True)
@@ -241,7 +241,7 @@ class YuzAlgilamaApp:
         r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
         return f"#{max(0, r-miktar):02x}{max(0, g-miktar):02x}{max(0, b-miktar):02x}"
 
-    # -------- ARDUINO --------
+    # -------- ARDUINO BAĞLANTISI --------
     def _portlari_tara(self):
         if not PYSERIAL_OK:
             self.port_combo["values"] = ["COM3"]
@@ -348,9 +348,9 @@ class YuzAlgilamaApp:
         self.video_lbl.image = None
 
     def _kamera_dongusu(self):
-        """Kamera okuma + yuz algilama - ayri thread'de calisir."""
+        """Kamera okuma + yüz algılama — ayrı bir thread'de çalışır."""
         kare_no = 0
-        son_yuzler = []   # Son algilanan yuzler (her karede yeniden algilama yapilmiyor)
+        son_yuzler = []   # Son algılanan yüzler (her karede yeniden algılama yapılmıyor)
 
         while not self._stop_event.is_set() and self.kamera is not None:
             ret, kare = self.kamera.read()
@@ -363,7 +363,7 @@ class YuzAlgilamaApp:
 
             # Her N karede bir algilama (performans)
             if kare_no % HER_KAC_KAREDE == 0:
-                # Kucuk boyutta algila -> cok daha hizli
+                # Küçük boyutta algıla -> çok daha hızlı
                 kucuk = cv2.resize(kare, None, fx=ALGILAMA_OLCEK, fy=ALGILAMA_OLCEK,
                                    interpolation=cv2.INTER_LINEAR)
                 gri = cv2.cvtColor(kucuk, cv2.COLOR_BGR2GRAY)
@@ -376,7 +376,7 @@ class YuzAlgilamaApp:
                     minSize=(MIN_YUZ_BOYUTU, MIN_YUZ_BOYUTU),
                     flags=cv2.CASCADE_SCALE_IMAGE
                 )
-                # Kucuk karedeki koordinatlari orijinal boyuta olcekle
+                # Küçük karedeki koordinatları orijinal boyuta ölçekle
                 olcek_geri = 1.0 / ALGILAMA_OLCEK
                 son_yuzler = [(int(x * olcek_geri), int(y * olcek_geri),
                                int(w * olcek_geri), int(h * olcek_geri))
@@ -447,14 +447,14 @@ class YuzAlgilamaApp:
 
         self.root.after(max(1, int(1000 / VIDEO_FPS_HEDEF)), self._video_guncelle)
 
-    # -------- MUTE --------
+    # -------- SESSİZE ALMA --------
     def mute_toggle(self):
         self.mute = not self.mute
         if self.mute:
             self.btn_mute.configure(text="Alarmı Aç")
             self.btn_mute._orijinal_renk = METIN_GRI
             self.btn_mute.configure(bg=METIN_GRI)
-            # Mute olur olmaz arduino'yu sustur
+            # Mute olur olmaz Arduino'yu sustur
             self._arduino_sinyal(False)
             self.onceki_gonderilen = False
         else:
@@ -462,7 +462,7 @@ class YuzAlgilamaApp:
             self.btn_mute._orijinal_renk = TURUNCU
             self.btn_mute.configure(bg=TURUNCU)
 
-    # -------- DURUM GUNCELLEME --------
+    # -------- DURUM GÜNCELLEME --------
     def _durum_guncelle(self):
         # Kamera LED
         if self.kamera_aktif:
@@ -498,7 +498,7 @@ class YuzAlgilamaApp:
         led["canvas"].itemconfig(led["nokta"], fill=renk)
         led["label"].configure(text=durum)
 
-    # -------- KAPAT --------
+    # -------- KAPATMA --------
     def sistemi_kapat(self):
         if messagebox.askyesno("Sistemi Kapat", "Uygulamayı kapatmak istediğinize emin misiniz?"):
             try:

@@ -86,7 +86,7 @@ Buzzer (-)  ──►  GND
 
 ### Seçenek A — Hazır `.exe` (önerilen)
 
-1. [**Releases** sayfasından](https://github.com/iambatuw/ardunioproject/releases) `YuzAlgilama.exe` dosyasını indirin
+1. [**Releases** sayfasından](https://github.com/iambatuw/ardunioproject/releases) `YüzAlgılama.exe` dosyasını indirin
 2. Çift tıklayın — Python kurulumu gerekmez
 3. Windows Defender uyarısı çıkarsa **More info → Run anyway**
 
@@ -119,7 +119,7 @@ pip install -r requirements.txt
 #### 4. Uygulamayı çalıştırın
 
 ```powershell
-python yuz_algilama.py
+python yüz_algılama.py
 ```
 
 ## Kullanım
@@ -147,7 +147,7 @@ Uygulama açıldığında sağ panelde tüm kontroller bulunur:
 
 ## Performans İnce Ayarı
 
-`yuz_algilama.py` başındaki sabitler:
+`yüz_algılama.py` dosyasındaki sabitler:
 
 ```python
 SCALE_FACTOR      = 1.25   # Yüksek = daha hızlı, düşük = daha hassas
@@ -170,16 +170,16 @@ Kendi `.exe` dosyanızı oluşturmak için:
 
 ```powershell
 pip install pyinstaller
-pyinstaller --onefile --noconsole --name "YuzAlgilama" --collect-all cv2 yuz_algilama.py
+pyinstaller --onefile --noconsole --name "YüzAlgılama" --collect-all cv2 yüz_algılama.py
 ```
 
-Çıktı: `dist/YuzAlgilama.exe` (~60 MB)
+Çıktı: `dist/YüzAlgılama.exe` (~66 MB)
 
 ## Proje Yapısı
 
 ```
 ardunioproject/
-├── yuz_algilama.py              # Ana GUI uygulaması (Tkinter + OpenCV)
+├── yüz_algılama.py              # Ana GUI uygulaması (Tkinter + OpenCV)
 ├── arduino_buzzer/
 │   └── arduino_buzzer.ino       # Arduino tarafı (Serial → Pin 8)
 ├── requirements.txt             # Python bağımlılıkları
