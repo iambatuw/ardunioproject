@@ -58,7 +58,7 @@ TURUNCU   = "#FF9500"
 class YuzAlgilamaApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Yuz Algilama Sistemi")
+        self.root.title("Yüz Algılama Sistemi")
         self.root.geometry("1100x640")
         self.root.configure(bg=BEYAZ)
         self.root.minsize(960, 560)
