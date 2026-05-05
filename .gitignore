@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+.venv/
+venv/
+env/
+
+# PyInstaller
+build/
+dist/
+*.spec
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.windsurf/
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Logs / geçici
+*.log
+*.tmp
